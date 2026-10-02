@@ -16,3 +16,16 @@ def simulate_progression(context: ModuleContext, from_level: int, target_level: 
                         {"from_level": from_level, "target_level": target_level,
                          "levels_to_gain": target_level - from_level, "steps": list(steps),
                          "application_state": "plan-only"})
+
+def compare_equipment(context: ModuleContext, left: list[str], right: list[str]) -> ModuleResult:
+    if context.module_id != MODULE_ID or context.capability_state != "plan-only":
+        return ModuleResult("blocked", "Character Tools requires a plan-only context.")
+    left_items, right_items = list(left), list(right)
+    return ModuleResult("ready", "Equipment comparison prepared.", {
+        "left": left_items,
+        "right": right_items,
+        "shared": sorted(set(left_items) & set(right_items)),
+        "only_left": sorted(set(left_items) - set(right_items)),
+        "only_right": sorted(set(right_items) - set(left_items)),
+        "application_state": "plan-only",
+    })
